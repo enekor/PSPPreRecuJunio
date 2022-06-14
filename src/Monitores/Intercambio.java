@@ -16,20 +16,26 @@ public class Intercambio {
         System.out.println("nuevo ping en la base de datos");
         pings.add(ping);
         totalPings++;
+
         System.out.println("pings almacenados -> "+pings.size());
         System.out.println("pings totales -> "+totalPings);
+
         notifyAll();
     }
 
     public synchronized String sacarPing() throws InterruptedException {
         while(pings.isEmpty()){
             if(totalPings == maxPings){
+                notifyAll();
                 return "FIN";
             }
             System.out.println("esperando ping");
             wait();
         }
         System.out.println("sale un ping");
-        return pings.poll();
+        String ret = pings.poll();
+
+        notifyAll();
+        return ret;
     }
 }
